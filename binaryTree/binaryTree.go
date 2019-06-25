@@ -6,9 +6,12 @@ import (
 )
 
 //二分搜索树
-//首先是一颗二叉树
-//对于树中的每个节点，它的右节点一定比自己大，左节点一定比自己小
-//树中的每个节点必须是可以比较的
+//满足条件：
+//	首先是一颗二叉树
+//	对于树中的每个节点，它的右节点一定比自己大，左节点一定比自己小
+//	树中的每个节点必须是可以比较的
+//特点：
+//	具有顺序性，能快速拿到最大值最小值，也能指定一个元素快速拿到它的前驱和后继
 type BinaryTree struct {
 	//树的跟节点指针
 	root *Node
@@ -70,9 +73,9 @@ func (t *BinaryTree) add(root, node *Node) *Node {
 }
 
 //广度优先遍历
-func (t *BinaryTree) Foreach() {
+func (t *BinaryTree) Foreach(read []int) ([]int){
 	if t.size == 0 {
-		return
+		return read
 	}
 	//这里队列仍然借用slice简陋的实现一下
 	list := make([]*Node, 0)
@@ -81,13 +84,12 @@ func (t *BinaryTree) Foreach() {
 	var node *Node
 	for {
 		if len(list) == 0 {
-			return
+			break
 		}
 		//pop
 		node = list[0]
 		list = list[1:]
-		fmt.Println(list)
-		fmt.Printf(" %d", node.Value)
+		read = append(read, node.Value)
 		if node.left != nil {
 			list = append(list, node.left)
 		}
@@ -95,6 +97,7 @@ func (t *BinaryTree) Foreach() {
 			list = append(list, node.right)
 		}
 	}
+	return read
 }
 
 //深度优先遍历-利用栈来实现非递归遍历
@@ -145,18 +148,18 @@ func (t *BinaryTree) front(root *Node) {
 
 //深度优先遍历-中序遍历
 //按照二分搜索树的顺序遍历
-//第二次访问到当前节点的时候打印值
-func (t *BinaryTree) Middle() {
-	t.middle(t.root)
+//第二次访问到当前节点的时候存储到read里面
+func (t *BinaryTree) Middle(read *[]*Node) {
+	t.middle(t.root, read)
 }
 
-func (t *BinaryTree) middle(root *Node) {
+func (t *BinaryTree) middle(root *Node, read *[]*Node) {
 	if root == nil {
 		return
 	}
-	t.middle(root.left)
-	fmt.Printf(" %d", root.Value)
-	t.middle(root.right)
+	t.middle(root.left, read)
+	*read = append(*read, root)
+	t.middle(root.right, read)
 }
 
 //深度优先遍历-后续遍历

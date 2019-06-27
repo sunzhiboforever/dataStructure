@@ -13,7 +13,7 @@ func TestBinaryTree_Add(t *testing.T) {
 		node := &Node{Value:r}
 		tree.Add(node)
 	}
-	check(tree.root, t)
+	go check(tree.root, t)
 }
 
 func check(root *Node, t *testing.T) {
